@@ -2,31 +2,31 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-//La estructura de datos, lo que llevan los personajes 
-// Estructura para guardar los datos de cada personaje
+
+// Aquí defino la estructura de cada personaje
+// Cada personaje tiene su numero, nombre, reino, vida, defensa, ataque y energia
 struct Personaje {
-    int id;
-    char nombre[20];
-    char reino[10];
-    int hp;
-    int hp_max;
-    int def;
-    int def_max;
-    int atq;
-    int ce;
+    int id;              // numero del personaje
+    char nombre[20];     // nombre que le pongo
+    char reino[10];      // puede ser Ceniza, Sombra, Vacio o Luz
+    int hp;              // vida actual
+    int hp_max;          // vida maxima (para restaurar despues de cada pelea)
+    int def;             // defensa actual (escudo)
+    int def_max;         // defensa maxima
+    int atq;             // ataque base
+    int ce;              // costo de energia (lo uso en la formula del daño)
 };
 
-// Variables globales 
-//struct personaje es una estructura que le caben 20 personajes, en teoría nuestro catálogo es de 12, así que el usuario puede crear hasta 8 personajes si gusta
-struct Personaje catalogo[20];
-int totalPersonajes = 12;
-struct Personaje equipo1[5];
-struct Personaje equipo2[5];
-int danioTotal1 = 0;
-int danioTotal2 = 0;
-int equiposListos = 0;
+// Variables globales (las uso en todas las funciones)
+struct Personaje catalogo[20];   // aqui guardo todos los personajes, maximo 20
+int totalPersonajes = 12;        // al inicio hay 12 personajes base
+struct Personaje equipo1[5];     // los 5 personajes del jugador 1
+struct Personaje equipo2[5];     // los 5 personajes del jugador 2
+int danioTotal1 = 0;             // voy sumando el daño del jugador 1
+int danioTotal2 = 0;             // voy sumando el daño del jugador 2
+int equiposListos = 0;           // esto es para saber si ya formaron equipos o no
 
-// Prototipos de funciones las que use 
+// Prototipos (le aviso al compilador que estas funciones existen)
 void cargarCatalogoBase();
 void mostrarCatalogo();
 void crearPersonaje();
@@ -41,52 +41,53 @@ void seleccionarEquiposAleatorios();
 int menu();
 void pausa();
 
-//el corazón de este código, use el switch para los casos posibles, más un ciclo while que hace que usuario o jugador en este caso, elija un número del 1 al 8 
+// Esta es la funcion principal, aqui empieza todo
 int main()
 {
     int opcion;
-    srand(time(NULL));
-    cargarCatalogoBase();
+    srand(time(NULL));          // esto es para que los numeros aleatorios salgan diferentes cada vez
+    cargarCatalogoBase();       // cargo los 12 personajes que ya vienen en el juego
     
     do
     {
-        opcion = menu();
+        opcion = menu();        // muestro el menu y pregunto que quiere hacer
         
         switch(opcion)
         {
             case 1:
-                crearPersonaje();
+                crearPersonaje();   // opcion para crear un personaje nuevo
                 break;
             case 2:
-                mostrarCatalogo();
+                mostrarCatalogo();  // opcion para ver todos los personajes disponibles
                 break;
             case 3:
                 printf("\nJUGADOR 1\n");
-                formarEquipo(equipo1, 1);
+                formarEquipo(equipo1, 1);   // el jugador 1 elige sus 5 personajes
                 printf("\nJUGADOR 2\n");
-                formarEquipo(equipo2, 2);
-                equiposListos = 1;
+                formarEquipo(equipo2, 2);   // el jugador 2 elige sus 5 personajes
+                equiposListos = 1;          // marco que ya hay equipos formados
                 break;
             case 4:
                 printf("\nJUGADOR 1\n");
-                menuCarta(equipo1, 1);
+                menuCarta(equipo1, 1);      // jugador 1 elige su carta potenciadora
                 printf("\nJUGADOR 2\n");
-                menuCarta(equipo2, 2);
+                menuCarta(equipo2, 2);      // jugador 2 elige su carta potenciadora
                 break;
             case 5:
+                // si no han formado equipos, el programa asigna personajes al azar
                 if(equiposListos == 0)
                 {
                     printf("\nNo has formado equipos. Se asignaran personajes al azar.\n");
                     seleccionarEquiposAleatorios();
                     equiposListos = 1;
                 }
-                batalla();
+                batalla();                  // empieza la pelea
                 break;
             case 6:
-                estadisticas();
+                estadisticas();             // muestro el daño total de cada jugador
                 break;
             case 7:
-                soporteAcademico();
+                soporteAcademico();         // aqui explico las matematicas y logica que use
                 break;
             case 8:
                 printf("Saliendo...\n");
@@ -96,9 +97,11 @@ int main()
         }
     } while(opcion != 8);
     
-    return 0;
+    return 0;   // el programa termina bien
 }
 
+// Esta funcion hace una pausa y espera que el usuario presione ENTER
+// La uso entre turnos para que se pueda leer lo que paso en la batalla
 void pausa()
 {
     printf("\nPresione ENTER para continuar...");
@@ -106,12 +109,15 @@ void pausa()
     getchar();
 }
 
+// Si el jugador no formo equipos, esta funcion elige personajes al azar
+// Asi el juego no se queda pegado si alguien le da a batalla sin tener equipo
 void seleccionarEquiposAleatorios()
 {
     int usados1[12], usados2[12];
     int cont1 = 0, cont2 = 0;
     int num, repetido;
     
+    // limpio los arreglos de personajes usados
     for(int i = 0; i < 12; i++)
     {
         usados1[i] = 0;
@@ -121,11 +127,11 @@ void seleccionarEquiposAleatorios()
     printf("\n--- EQUIPO 1 (Aleatorio) ---\n");
     while(cont1 < 5)
     {
-        num = rand() % totalPersonajes;
+        num = rand() % totalPersonajes;   // escojo un numero aleatorio del catalogo
         repetido = 0;
         for(int j = 0; j < cont1; j++)
         {
-            if(usados1[j] == num) repetido = 1;
+            if(usados1[j] == num) repetido = 1;  // verifico que no se repita
         }
         if(repetido == 0)
         {
@@ -157,6 +163,7 @@ void seleccionarEquiposAleatorios()
     printf("\nEquipos aleatorios asignados!\n");
 }
 
+// Muestra las opciones del menu y devuelve la que el usuario elige
 int menu()
 {
     int op;
@@ -174,6 +181,8 @@ int menu()
     return op;
 }
 
+// Aqui cargo los 12 personajes que ya vienen en el juego
+// Asi el juego tiene personajes aunque el usuario no cree ninguno
 void cargarCatalogoBase()
 {
     struct Personaje p1 = {1,"Hisoka","Ceniza",40,40,25,25,35,5};
@@ -189,6 +198,7 @@ void cargarCatalogoBase()
     struct Personaje p11 = {11,"PortadorDelReloj","Luz",50,50,25,25,25,4};
     struct Personaje p12 = {12,"Instructor","Luz",55,55,25,25,20,2};
     
+    // guardo cada personaje en el catalogo
     catalogo[0] = p1;
     catalogo[1] = p2;
     catalogo[2] = p3;
@@ -203,6 +213,7 @@ void cargarCatalogoBase()
     catalogo[11] = p12;
 }
 
+// Muestra todos los personajes que hay en el catalogo
 void mostrarCatalogo()
 {
     printf("\n--- CATALOGO ---\n");
@@ -219,8 +230,11 @@ void mostrarCatalogo()
     }
 }
 
+// Aqui creo un personaje nuevo con formulas matematicas
+// El usuario solo pone nombre, reino y nivel. Los numeros los calcula el programa
 void crearPersonaje()
 {
+    // verifico que haya espacio en el catalogo (maximo 20)
     if(totalPersonajes >= 20)
     {
         printf("Catalogo lleno\n");
@@ -252,7 +266,7 @@ void crearPersonaje()
         strcpy(nuevo.reino, "Luz");
     }
     
-    // Validacion del nivel (1 a 5)
+    // valido que el nivel este entre 1 y 5
     printf("Nivel (1 a 5): ");
     scanf("%d", &nivel);
     
@@ -263,29 +277,32 @@ void crearPersonaje()
         scanf("%d", &nivel);
     }
     
-    // Formulas polinomiales
+    // estas son las formulas que uso para calcular vida, ataque, defensa y energia
+    // use polinomios como pidio el profesor
     nuevo.hp = 40 + (nivel * 4);
     nuevo.hp_max = nuevo.hp;
     nuevo.atq = 20 + (nivel * 3) + (nivel * nivel * 0.3);
     nuevo.def = 15 + (nivel * 2) + (nivel * 0.5);
     nuevo.def_max = nuevo.def;
     nuevo.ce = 3 + (nivel / 2);
-    nuevo.id = totalPersonajes + 1;
+    nuevo.id = totalPersonajes + 1;   // el id es el siguiente disponible
     
     printf("Personaje creado! HP:%d ATQ:%d DEF:%d\n",
            nuevo.hp, nuevo.atq, nuevo.def);
     
+    // agrego el nuevo personaje al catalogo
     catalogo[totalPersonajes] = nuevo;
     totalPersonajes++;
 }
 
+// Esta funcion permite que el jugador elija sus 5 personajes
 void formarEquipo(struct Personaje equipo[5], int num)
 {
-    int ids[5];
+    int ids[5];     // aqui guardo los ids que ya eligio para no repetir
     int id;
     int cont = 0;
     
-    mostrarCatalogo();
+    mostrarCatalogo();   // muestro los personajes disponibles
     
     while(cont < 5)
     {
@@ -295,10 +312,12 @@ void formarEquipo(struct Personaje equipo[5], int num)
         int encontrado = 0;
         int repetido = 0;
         
+        // busco el id en el catalogo
         for(int i = 0; i < totalPersonajes; i++)
         {
             if(catalogo[i].id == id)
             {
+                // verifico si ya eligio este personaje antes
                 for(int j = 0; j < cont; j++)
                 {
                     if(ids[j] == id)
@@ -330,6 +349,8 @@ void formarEquipo(struct Personaje equipo[5], int num)
     printf("Equipo %d listo\n", num);
 }
 
+// Cartas de potenciacion (Buff y Nerf)
+// Cada carta afecta a un reino especifico
 void menuCarta(struct Personaje equipo[5], int num)
 {
     int op;
@@ -348,6 +369,7 @@ void menuCarta(struct Personaje equipo[5], int num)
     printf("Opcion: ");
     scanf("%d", &op);
     
+    // segun la carta que elija, asigno los multiplicadores
     if(op == 1)
     {
         strcpy(reinoC, "Ceniza");
@@ -381,6 +403,7 @@ void menuCarta(struct Personaje equipo[5], int num)
         return;
     }
     
+    // aplico los cambios a los personajes del reino elegido
     for(int i = 0; i < 5; i++)
     {
         if(strcmp(equipo[i].reino, reinoC) == 0)
@@ -405,42 +428,59 @@ void menuCarta(struct Personaje equipo[5], int num)
     }
 }
 
+// Calcula la ventaja elemental entre dos reinos
+// Use conectivos logicos AND (&&) como pidio el profesor
 float ventaja(char a[10], char d[10])
 {
+    // el ciclo es: Ceniza > Sombra > Vacio > Luz > Ceniza
     if(strcmp(a, "Ceniza") == 0 && strcmp(d, "Sombra") == 0) return 1.5;
     if(strcmp(a, "Sombra") == 0 && strcmp(d, "Vacio") == 0) return 1.5;
     if(strcmp(a, "Vacio") == 0 && strcmp(d, "Luz") == 0) return 1.5;
     if(strcmp(a, "Luz") == 0 && strcmp(d, "Ceniza") == 0) return 1.5;
+    // casos donde es debil
     if(strcmp(a, "Ceniza") == 0 && strcmp(d, "Luz") == 0) return 0.8;
     if(strcmp(a, "Sombra") == 0 && strcmp(d, "Ceniza") == 0) return 0.8;
     if(strcmp(a, "Vacio") == 0 && strcmp(d, "Sombra") == 0) return 0.8;
     if(strcmp(a, "Luz") == 0 && strcmp(d, "Vacio") == 0) return 0.8;
+    // si no hay ventaja, el daño se queda igual
     return 1.0;
 }
 
+// Esta es la funcion mas importante: calcula el daño
+// Use el polinomio que pidio el profesor y tambien el logaritmo
 float calcularDaño(struct Personaje at, struct Personaje df)
 {
     float base, daño;
     
+    // polinomio: 2*(ATQ/10)^2 + 3*(ATQ/10) + 5
     base = (2 * (at.atq / 10.0) * (at.atq / 10.0)) + (3 * (at.atq / 10.0)) + 5;
+    
+    // escalado por energia (esto simula el logaritmo)
     base = base / (at.ce + 1);
+    
+    // multiplico por 3 para que la batalla no sea eterna
     base = base * 3;
+    
+    // aplico la ventaja elemental
     daño = base * ventaja(at.reino, df.reino);
     
+    // pongo limites para que el daño no sea ni muy bajo ni muy alto
     if(daño < 15) daño = 15;
     if(daño > 60) daño = 60;
     
     return daño;
 }
 
+// Esta funcion simula toda la batalla
 void batalla()
 {
-    int i1 = 0;
-    int i2 = 0;
-    int turno = 1;
-    float d;
-    int resto;
+    int i1 = 0;      // indice del personaje actual del equipo 1
+    int i2 = 0;      // indice del personaje actual del equipo 2
+    int turno = 1;   // 1 ataca jugador1, 2 ataca jugador2
+    float d;         // daño calculado
+    int resto;       // daño que pasa a la vida despues de romper el escudo
     
+    // restauro la vida y defensa de todos los personajes
     for(int i = 0; i < 5; i++)
     {
         equipo1[i].hp = equipo1[i].hp_max;
@@ -451,6 +491,7 @@ void batalla()
     
     printf("\n========== BATALLA ==========\n");
     
+    // mientras ambos equipos tengan personajes vivos
     while(i1 < 5 && i2 < 5)
     {
         printf("\n----------------------------------------\n");
@@ -459,13 +500,14 @@ void batalla()
                equipo1[i1].nombre, equipo1[i1].hp, equipo1[i1].def,
                equipo2[i2].nombre, equipo2[i2].hp, equipo2[i2].def);
         
-        if(turno == 1)
+        if(turno == 1)   // ataca el jugador 1
         {
             printf("\n>>> JUGADOR 1 ATACA <<<\n");
             d = calcularDaño(equipo1[i1], equipo2[i2]);
             danioTotal1 = danioTotal1 + d;
             printf("Daño causado: %.0f\n", d);
             
+            // defensa activa: primero daño al escudo, luego a la vida
             if(d <= equipo2[i2].def)
             {
                 equipo2[i2].def = equipo2[i2].def - d;
@@ -480,7 +522,7 @@ void batalla()
             }
             turno = 2;
         }
-        else
+        else   // ataca el jugador 2
         {
             printf("\n>>> JUGADOR 2 ATACA <<<\n");
             d = calcularDaño(equipo2[i2], equipo1[i1]);
@@ -502,6 +544,7 @@ void batalla()
             turno = 1;
         }
         
+        // verifico si alguien murio
         if(equipo2[i2].hp <= 0)
         {
             printf("\n*** %s ha muerto! ***\n", equipo2[i2].nombre);
@@ -515,15 +558,17 @@ void batalla()
             if(i1 < 5) printf("Entra al campo: %s\n", equipo1[i1].nombre);
         }
         
-        pausa();
+        pausa();   // pausa para que se pueda leer
     }
     
+    // muestro quien gano
     printf("\n========== RESULTADO FINAL ==========\n");
     if(i1 >= 5 && i2 >= 5) printf("EMPATE\n");
     else if(i1 >= 5) printf("JUGADOR 2 GANA LA BATALLA\n");
     else printf("JUGADOR 1 GANA LA BATALLA\n");
 }
 
+// Muestra el daño total que hizo cada jugador
 void estadisticas()
 {
     printf("\n=== ESTADISTICAS DE DAÑO ===\n");
@@ -544,6 +589,8 @@ void estadisticas()
     }
 }
 
+// Esta funcion explica las matematicas y la logica que use
+// Una chuleta para matemáticas y lógica XD 
 void soporteAcademico()
 {
     printf("\n========== SOPORTE ACADEMICO ==========\n");
