@@ -2,29 +2,31 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-
+//La estructura de datos, lo que llevan los personajes 
 // Estructura para guardar los datos de cada personaje
 struct Personaje {
-    int id;              // numero del personaje
-    char nombre[20];     // nombre del personaje
-    char reino[10];      // Ceniza, Sombra, Vacio o Luz
-    int hp;              // vida actual
-    int hp_max;          // vida maxima
-    int def;             // defensa actual (escudo)
-    int def_max;         // defensa maxima
-    int atq;             // ataque base
-    int ce;              // costo de energia
+    int id;
+    char nombre[20];
+    char reino[10];
+    int hp;
+    int hp_max;
+    int def;
+    int def_max;
+    int atq;
+    int ce;
 };
 
-// Variables globales (las usan todas las funciones)
-struct Personaje catalogo[20];   // aqui guardo todos los personajes
-int totalPersonajes = 12;        // empieza con 12 personajes base
-struct Personaje equipo1[5];     // equipo del jugador 1
-struct Personaje equipo2[5];     // equipo del jugador 2
-int danioTotal1 = 0;             // daño total que hizo el jugador 1
-int danioTotal2 = 0;             // daño total que hizo el jugador 2
+// Variables globales 
+//struct personaje es una estructura que le caben 20 personajes, en teoría nuestro catálogo es de 12, así que el usuario puede crear hasta 8 personajes si gusta
+struct Personaje catalogo[20];
+int totalPersonajes = 12;
+struct Personaje equipo1[5];
+struct Personaje equipo2[5];
+int danioTotal1 = 0;
+int danioTotal2 = 0;
+int equiposListos = 0;
 
-// Prototipos de funciones (aviso de que existen)
+// Prototipos de funciones las que use 
 void cargarCatalogoBase();
 void mostrarCatalogo();
 void crearPersonaje();
@@ -34,57 +36,127 @@ float calcularDaño(struct Personaje at, struct Personaje df);
 float ventaja(char a[10], char d[10]);
 void batalla();
 void estadisticas();
+void soporteAcademico();
+void seleccionarEquiposAleatorios();
 int menu();
+void pausa();
 
-// Programa principal
+//el corazón de este código, use el switch para los casos posibles, más un ciclo while que hace que usuario o jugador en este caso, elija un número del 1 al 8 
 int main()
 {
     int opcion;
-    srand(time(NULL));          // para que los numeros random sean diferentes cada vez
-    cargarCatalogoBase();       // cargo los 12 personajes del juego
+    srand(time(NULL));
+    cargarCatalogoBase();
     
     do
     {
-        opcion = menu();        // muestro el menu y pido opcion
+        opcion = menu();
         
         switch(opcion)
         {
             case 1:
-                crearPersonaje();    // crea un personaje nuevo
+                crearPersonaje();
                 break;
             case 2:
-                mostrarCatalogo();   // muestra todos los personajes
+                mostrarCatalogo();
                 break;
             case 3:
                 printf("\nJUGADOR 1\n");
-                formarEquipo(equipo1, 1);   // jugador 1 elige sus 5
+                formarEquipo(equipo1, 1);
                 printf("\nJUGADOR 2\n");
-                formarEquipo(equipo2, 2);   // jugador 2 elige sus 5
+                formarEquipo(equipo2, 2);
+                equiposListos = 1;
                 break;
             case 4:
                 printf("\nJUGADOR 1\n");
-                menuCarta(equipo1, 1);      // jugador 1 usa carta
+                menuCarta(equipo1, 1);
                 printf("\nJUGADOR 2\n");
-                menuCarta(equipo2, 2);      // jugador 2 usa carta
+                menuCarta(equipo2, 2);
                 break;
             case 5:
-                batalla();                  // empieza la pelea
+                if(equiposListos == 0)
+                {
+                    printf("\nNo has formado equipos. Se asignaran personajes al azar.\n");
+                    seleccionarEquiposAleatorios();
+                    equiposListos = 1;
+                }
+                batalla();
                 break;
             case 6:
-                estadisticas();             // muestra los resultados
+                estadisticas();
                 break;
             case 7:
+                soporteAcademico();
+                break;
+            case 8:
                 printf("Saliendo...\n");
                 break;
             default:
                 printf("Opcion no valida\n");
         }
-    } while(opcion != 7);   // repite hasta que elija salir
+    } while(opcion != 8);
     
-    return 0;   // el programa termino bien
+    return 0;
 }
 
-// Muestra el menu y devuelve la opcion elegida
+void pausa()
+{
+    printf("\nPresione ENTER para continuar...");
+    getchar();
+    getchar();
+}
+
+void seleccionarEquiposAleatorios()
+{
+    int usados1[12], usados2[12];
+    int cont1 = 0, cont2 = 0;
+    int num, repetido;
+    
+    for(int i = 0; i < 12; i++)
+    {
+        usados1[i] = 0;
+        usados2[i] = 0;
+    }
+    
+    printf("\n--- EQUIPO 1 (Aleatorio) ---\n");
+    while(cont1 < 5)
+    {
+        num = rand() % totalPersonajes;
+        repetido = 0;
+        for(int j = 0; j < cont1; j++)
+        {
+            if(usados1[j] == num) repetido = 1;
+        }
+        if(repetido == 0)
+        {
+            equipo1[cont1] = catalogo[num];
+            usados1[cont1] = num;
+            cont1++;
+            printf("Agregado: %s\n", catalogo[num].nombre);
+        }
+    }
+    
+    printf("\n--- EQUIPO 2 (Aleatorio) ---\n");
+    while(cont2 < 5)
+    {
+        num = rand() % totalPersonajes;
+        repetido = 0;
+        for(int j = 0; j < cont2; j++)
+        {
+            if(usados2[j] == num) repetido = 1;
+        }
+        if(repetido == 0)
+        {
+            equipo2[cont2] = catalogo[num];
+            usados2[cont2] = num;
+            cont2++;
+            printf("Agregado: %s\n", catalogo[num].nombre);
+        }
+    }
+    
+    printf("\nEquipos aleatorios asignados!\n");
+}
+
 int menu()
 {
     int op;
@@ -95,13 +167,13 @@ int menu()
     printf("4.Usar carta potenciacion\n");
     printf("5.Iniciar batalla\n");
     printf("6.Ver estadisticas\n");
-    printf("7.Salir\n");
+    printf("7.Soporte Academico\n");
+    printf("8.Salir\n");
     printf("Opcion: ");
     scanf("%d", &op);
     return op;
 }
 
-// Carga los 12 personajes que ya vienen en el juego
 void cargarCatalogoBase()
 {
     struct Personaje p1 = {1,"Hisoka","Ceniza",40,40,25,25,35,5};
@@ -117,7 +189,6 @@ void cargarCatalogoBase()
     struct Personaje p11 = {11,"PortadorDelReloj","Luz",50,50,25,25,25,4};
     struct Personaje p12 = {12,"Instructor","Luz",55,55,25,25,20,2};
     
-    // guardo cada personaje en el catalogo
     catalogo[0] = p1;
     catalogo[1] = p2;
     catalogo[2] = p3;
@@ -132,7 +203,6 @@ void cargarCatalogoBase()
     catalogo[11] = p12;
 }
 
-// Muestra todos los personajes del catalogo en pantalla
 void mostrarCatalogo()
 {
     printf("\n--- CATALOGO ---\n");
@@ -149,10 +219,8 @@ void mostrarCatalogo()
     }
 }
 
-// Crea un personaje nuevo con formulas matematicas
 void crearPersonaje()
 {
-    // verifico que haya espacio en el catalogo
     if(totalPersonajes >= 20)
     {
         printf("Catalogo lleno\n");
@@ -184,12 +252,18 @@ void crearPersonaje()
         strcpy(nuevo.reino, "Luz");
     }
     
-    printf("Nivel (1 a 10): ");
+    // Validacion del nivel (1 a 5)
+    printf("Nivel (1 a 5): ");
     scanf("%d", &nivel);
-    if(nivel < 1) nivel = 1;
-    if(nivel > 10) nivel = 10;
     
-    // formulas para calcular los atributos (polinomios)
+    while(nivel < 1 || nivel > 5)
+    {
+        printf("ERROR: El nivel debe ser entre 1 y 5.\n");
+        printf("Nivel (1 a 5): ");
+        scanf("%d", &nivel);
+    }
+    
+    // Formulas polinomiales
     nuevo.hp = 40 + (nivel * 4);
     nuevo.hp_max = nuevo.hp;
     nuevo.atq = 20 + (nivel * 3) + (nivel * nivel * 0.3);
@@ -201,19 +275,17 @@ void crearPersonaje()
     printf("Personaje creado! HP:%d ATQ:%d DEF:%d\n",
            nuevo.hp, nuevo.atq, nuevo.def);
     
-    // lo agrego al catalogo
     catalogo[totalPersonajes] = nuevo;
     totalPersonajes++;
 }
 
-// Cada jugador elige sus 5 personajes
 void formarEquipo(struct Personaje equipo[5], int num)
 {
-    int ids[5];     // guardo los ids para no repetir
+    int ids[5];
     int id;
     int cont = 0;
     
-    mostrarCatalogo();   // muestro los personajes disponibles
+    mostrarCatalogo();
     
     while(cont < 5)
     {
@@ -223,12 +295,10 @@ void formarEquipo(struct Personaje equipo[5], int num)
         int encontrado = 0;
         int repetido = 0;
         
-        // busco el id en el catalogo
         for(int i = 0; i < totalPersonajes; i++)
         {
             if(catalogo[i].id == id)
             {
-                // verifico si ya lo eligio antes
                 for(int j = 0; j < cont; j++)
                 {
                     if(ids[j] == id)
@@ -260,14 +330,14 @@ void formarEquipo(struct Personaje equipo[5], int num)
     printf("Equipo %d listo\n", num);
 }
 
-// Cartas de potenciacion (se usan antes de la batalla)
 void menuCarta(struct Personaje equipo[5], int num)
 {
     int op;
     char reinoC[10];
-    float a = 1;   // multiplicador de ataque
-    float h = 1;   // multiplicador de vida
-    float d = 1;   // multiplicador de defensa
+    float multAtq = 1;
+    float multHp = 1;
+    float multDef = 1;
+    int alguienPotenciado = 0;
     
     printf("Cartas:\n");
     printf("1.LlamaEterna(Ceniza) +25 ATQ -15 DEF\n");
@@ -278,29 +348,32 @@ void menuCarta(struct Personaje equipo[5], int num)
     printf("Opcion: ");
     scanf("%d", &op);
     
-    // elijo la carta y sus efectos
     if(op == 1)
     {
         strcpy(reinoC, "Ceniza");
-        a = 1.25;   // +25% ataque
-        d = 0.85;   // -15% defensa
+        multAtq = 1.25;
+        multDef = 0.85;
+        printf("\n--- Aplicando LlamaEterna a personajes de Ceniza ---\n");
     }
     else if(op == 2)
     {
         strcpy(reinoC, "Sombra");
-        h = 1.20;   // +20% vida
-        a = 0.90;   // -10% ataque
+        multHp = 1.20;
+        multAtq = 0.90;
+        printf("\n--- Aplicando MantoOscuro a personajes de Sombra ---\n");
     }
     else if(op == 3)
     {
         strcpy(reinoC, "Vacio");
-        d = 1.30;   // +30% defensa
+        multDef = 1.30;
+        printf("\n--- Aplicando AbismoInterior a personajes de Vacio ---\n");
     }
     else if(op == 4)
     {
         strcpy(reinoC, "Luz");
-        a = 1.25;   // +25% ataque
-        h = 0.85;   // -15% vida
+        multAtq = 1.25;
+        multHp = 0.85;
+        printf("\n--- Aplicando LuzDeVerdad a personajes de Luz ---\n");
     }
     else
     {
@@ -308,105 +381,66 @@ void menuCarta(struct Personaje equipo[5], int num)
         return;
     }
     
-    // aplico la carta a los personajes del reino elegido
     for(int i = 0; i < 5; i++)
     {
         if(strcmp(equipo[i].reino, reinoC) == 0)
         {
-            equipo[i].atq = equipo[i].atq * a;
-            equipo[i].hp = equipo[i].hp * h;
-            equipo[i].hp_max = equipo[i].hp_max * h;
-            equipo[i].def = equipo[i].def * d;
-            equipo[i].def_max = equipo[i].def_max * d;
-            printf("%s potenciado\n", equipo[i].nombre);
+            printf("\n%s fue potenciado:\n", equipo[i].nombre);
+            printf("  Ataque: %d -> %d", equipo[i].atq, (int)(equipo[i].atq * multAtq));
+            equipo[i].atq = equipo[i].atq * multAtq;
+            printf("  Vida: %d -> %d", equipo[i].hp, (int)(equipo[i].hp * multHp));
+            equipo[i].hp = equipo[i].hp * multHp;
+            equipo[i].hp_max = equipo[i].hp_max * multHp;
+            printf("  Defensa: %d -> %d", equipo[i].def, (int)(equipo[i].def * multDef));
+            equipo[i].def = equipo[i].def * multDef;
+            equipo[i].def_max = equipo[i].def_max * multDef;
+            printf("\n");
+            alguienPotenciado = 1;
         }
+    }
+    
+    if(alguienPotenciado == 0)
+    {
+        printf("\nNingun personaje de tu equipo es del reino %s. Carta sin efecto.\n", reinoC);
     }
 }
 
-// Calcula la ventaja elemental entre reinos
 float ventaja(char a[10], char d[10])
 {
-    // ciclo: Ceniza > Sombra > Vacio > Luz > Ceniza
-    
-    // casos donde es fuerte (multiplica x1.5)
-    if(strcmp(a, "Ceniza") == 0 && strcmp(d, "Sombra") == 0)
-    {
-        return 1.5;
-    }
-    if(strcmp(a, "Sombra") == 0 && strcmp(d, "Vacio") == 0)
-    {
-        return 1.5;
-    }
-    if(strcmp(a, "Vacio") == 0 && strcmp(d, "Luz") == 0)
-    {
-        return 1.5;
-    }
-    if(strcmp(a, "Luz") == 0 && strcmp(d, "Ceniza") == 0)
-    {
-        return 1.5;
-    }
-    
-    // casos donde es debil (multiplica x0.8)
-    if(strcmp(a, "Ceniza") == 0 && strcmp(d, "Luz") == 0)
-    {
-        return 0.8;
-    }
-    if(strcmp(a, "Sombra") == 0 && strcmp(d, "Ceniza") == 0)
-    {
-        return 0.8;
-    }
-    if(strcmp(a, "Vacio") == 0 && strcmp(d, "Sombra") == 0)
-    {
-        return 0.8;
-    }
-    if(strcmp(a, "Luz") == 0 && strcmp(d, "Vacio") == 0)
-    {
-        return 0.8;
-    }
-    
-    // sin ventaja
+    if(strcmp(a, "Ceniza") == 0 && strcmp(d, "Sombra") == 0) return 1.5;
+    if(strcmp(a, "Sombra") == 0 && strcmp(d, "Vacio") == 0) return 1.5;
+    if(strcmp(a, "Vacio") == 0 && strcmp(d, "Luz") == 0) return 1.5;
+    if(strcmp(a, "Luz") == 0 && strcmp(d, "Ceniza") == 0) return 1.5;
+    if(strcmp(a, "Ceniza") == 0 && strcmp(d, "Luz") == 0) return 0.8;
+    if(strcmp(a, "Sombra") == 0 && strcmp(d, "Ceniza") == 0) return 0.8;
+    if(strcmp(a, "Vacio") == 0 && strcmp(d, "Sombra") == 0) return 0.8;
+    if(strcmp(a, "Luz") == 0 && strcmp(d, "Vacio") == 0) return 0.8;
     return 1.0;
 }
 
-// Calcula el daño usando el polinomio que pidio el profesor
 float calcularDaño(struct Personaje at, struct Personaje df)
 {
     float base, daño;
     
-    // polinomio: 2*(ATQ/10)^2 + 3*(ATQ/10) + 5
     base = (2 * (at.atq / 10.0) * (at.atq / 10.0)) + (3 * (at.atq / 10.0)) + 5;
-    
-    // escalado por energia (simula el logaritmo)
     base = base / (at.ce + 1);
-    
-    // multiplico para que la batalla no sea tan larga
     base = base * 3;
-    
-    // aplico la ventaja elemental
     daño = base * ventaja(at.reino, df.reino);
     
-    // limites: minimo 15, maximo 60
-    if(daño < 15)
-    {
-        daño = 15;
-    }
-    if(daño > 60)
-    {
-        daño = 60;
-    }
+    if(daño < 15) daño = 15;
+    if(daño > 60) daño = 60;
+    
     return daño;
 }
 
-// Simula la batalla completa
 void batalla()
 {
-    int i1 = 0;     // indice del personaje actual del equipo1
-    int i2 = 0;     // indice del personaje actual del equipo2
-    int turno = 1;  // 1 = ataca jugador1, 2 = ataca jugador2
-    float d;        // daño calculado
-    int resto;      // daño que pasa a la vida despues de romper el escudo
+    int i1 = 0;
+    int i2 = 0;
+    int turno = 1;
+    float d;
+    int resto;
     
-    // restauro la vida y defensa de todos los personajes
     for(int i = 0; i < 5; i++)
     {
         equipo1[i].hp = equipo1[i].hp_max;
@@ -415,86 +449,84 @@ void batalla()
         equipo2[i].def = equipo2[i].def_max;
     }
     
-    printf("\n--- BATALLA ---\n");
+    printf("\n========== BATALLA ==========\n");
     
-    // mientras ambos equipos tengan personajes vivos
     while(i1 < 5 && i2 < 5)
     {
-        printf("\n%s[V:%d D:%d] vs %s[V:%d D:%d]\n",
+        printf("\n----------------------------------------\n");
+        printf("%s vs %s\n", equipo1[i1].nombre, equipo2[i2].nombre);
+        printf("[J1] %s V:%d D:%d | [J2] %s V:%d D:%d\n",
                equipo1[i1].nombre, equipo1[i1].hp, equipo1[i1].def,
                equipo2[i2].nombre, equipo2[i2].hp, equipo2[i2].def);
         
-        if(turno == 1)   // ataca el jugador 1
+        if(turno == 1)
         {
+            printf("\n>>> JUGADOR 1 ATACA <<<\n");
             d = calcularDaño(equipo1[i1], equipo2[i2]);
             danioTotal1 = danioTotal1 + d;
-            printf("J1 ataca: %.0f\n", d);
+            printf("Daño causado: %.0f\n", d);
             
-            // defensa activa: primero daño al escudo, luego a la vida
             if(d <= equipo2[i2].def)
             {
-                equipo2[i2].def = equipo2[i2].def - d;   // solo daño al escudo
+                equipo2[i2].def = equipo2[i2].def - d;
+                printf("El escudo absorbe. DEF restante: %d\n", equipo2[i2].def);
             }
             else
             {
                 resto = d - equipo2[i2].def;
                 equipo2[i2].def = 0;
-                equipo2[i2].hp = equipo2[i2].hp - resto;   // daño a la vida
+                equipo2[i2].hp = equipo2[i2].hp - resto;
+                printf("Escudo roto! Daño a vida: %d. VIDA restante: %d\n", resto, equipo2[i2].hp);
             }
-            turno = 2;   // cambia el turno
+            turno = 2;
         }
-        else   // ataca el jugador 2
+        else
         {
+            printf("\n>>> JUGADOR 2 ATACA <<<\n");
             d = calcularDaño(equipo2[i2], equipo1[i1]);
             danioTotal2 = danioTotal2 + d;
-            printf("J2 ataca: %.0f\n", d);
+            printf("Daño causado: %.0f\n", d);
             
             if(d <= equipo1[i1].def)
             {
                 equipo1[i1].def = equipo1[i1].def - d;
+                printf("El escudo absorbe. DEF restante: %d\n", equipo1[i1].def);
             }
             else
             {
                 resto = d - equipo1[i1].def;
                 equipo1[i1].def = 0;
                 equipo1[i1].hp = equipo1[i1].hp - resto;
+                printf("Escudo roto! Daño a vida: %d. VIDA restante: %d\n", resto, equipo1[i1].hp);
             }
             turno = 1;
         }
         
-        // verifico si alguien murio
         if(equipo2[i2].hp <= 0)
         {
-            printf("%s muere\n", equipo2[i2].nombre);
-            i2 = i2 + 1;   // pasa al siguiente personaje
+            printf("\n*** %s ha muerto! ***\n", equipo2[i2].nombre);
+            i2 = i2 + 1;
+            if(i2 < 5) printf("Entra al campo: %s\n", equipo2[i2].nombre);
         }
         if(equipo1[i1].hp <= 0)
         {
-            printf("%s muere\n", equipo1[i1].nombre);
+            printf("\n*** %s ha muerto! ***\n", equipo1[i1].nombre);
             i1 = i1 + 1;
+            if(i1 < 5) printf("Entra al campo: %s\n", equipo1[i1].nombre);
         }
+        
+        pausa();
     }
     
-    // muestro el resultado final
-    printf("\n--- RESULTADO BATALLA ---\n");
-    if(i1 >= 5 && i2 >= 5)
-    {
-        printf("EMPATE\n");
-    }
-    else if(i1 >= 5)
-    {
-        printf("JUGADOR 2 GANA\n");
-    }
-    else
-    {
-        printf("JUGADOR 1 GANA\n");
-    }
+    printf("\n========== RESULTADO FINAL ==========\n");
+    if(i1 >= 5 && i2 >= 5) printf("EMPATE\n");
+    else if(i1 >= 5) printf("JUGADOR 2 GANA LA BATALLA\n");
+    else printf("JUGADOR 1 GANA LA BATALLA\n");
 }
 
-// Muestra las estadisticas finales
 void estadisticas()
 {
-    printf("\n--- ESTADISTICAS DE DAÑO ---\n");
+    printf("\n=== ESTADISTICAS DE DAÑO ===\n");
     printf("Daño Jugador 1: %d\n", danioTotal1);
     printf("Daño Jugador 2: %d\n", danioTotal2);
     
@@ -510,4 +542,22 @@ void estadisticas()
     {
         printf("Empate en daño\n");
     }
+}
+
+void soporteAcademico()
+{
+    printf("\n========== SOPORTE ACADEMICO ==========\n");
+    printf("MATEMATICAS USADAS:\n");
+    printf("1. Polinomio: Daño = 2*(ATQ/10)^2 + 3*(ATQ/10) + 5\n");
+    printf("2. Logaritmo: Daño_base / (CE + 1)\n");
+    printf("3. Inecuacion: if(daño <= defensa) escudo; else daño a vida\n");
+    printf("4. Valor Absoluto: La defensa nunca queda negativa\n");
+    printf("\nLOGICA USADA:\n");
+    printf("1. Conectivos AND (&&): if(reinoA==Ceniza && reinoD==Sombra)\n");
+    printf("2. Cuantificadores: while(i1<5 && i2<5)\n");
+    printf("3. Teoria de Conjuntos: Clasificacion por reinos\n");
+    printf("\nVENTAJA ELEMENTAL:\n");
+    printf("Ceniza > Sombra > Vacio > Luz > Ceniza\n");
+    printf("Fuerte: x1.5  |  Debil: x0.8\n");
+    printf("========================================\n");
 }
