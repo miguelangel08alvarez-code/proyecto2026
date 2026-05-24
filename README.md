@@ -54,7 +54,7 @@ Fórmulas para crear personajes:
 - HP = 40 + nivel × 4
 - ATQ = 20 + nivel × 3 + nivel² × 0.3
 - DEF = 15 + nivel × 2 + nivel × 0.5
-- CE = 3 + nivel ÷ 2
+- CE = 3 + (nivel / 2)
 
 Autores: 
 Miguel Álvarez, Richard Arrieta, Ángel Suárez,- Estudiante de Informática - IUJO
