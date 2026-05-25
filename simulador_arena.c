@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-// Aquí defino la estructura de cada personaje
+// Aquí defini la estructura de cada personaje por ejemplo 
 // Cada personaje tiene su numero, nombre, reino, vida, defensa, ataque y energia
 struct Personaje {
     int id;              // numero del personaje
@@ -19,7 +19,7 @@ struct Personaje {
 
 // Variables globales (las uso en todas las funciones)
 struct Personaje catalogo[20];   // aqui guardo todos los personajes, maximo 20
-int totalPersonajes = 12;        // al inicio hay 12 personajes base
+int totalPersonajes = 12;        // al inicio solo hay 12 personajes base
 struct Personaje equipo1[5];     // los 5 personajes del jugador 1
 struct Personaje equipo2[5];     // los 5 personajes del jugador 2
 int danioTotal1 = 0;             // voy sumando el daño del jugador 1
@@ -41,7 +41,7 @@ void seleccionarEquiposAleatorios();
 int menu();
 void pausa();
 
-// Esta es la funcion principal, aqui empieza todo
+// Esta es la funcion principal, aqui empieza todo está belleza 
 int main()
 {
     int opcion;
@@ -101,7 +101,7 @@ int main()
 }
 
 // Esta funcion hace una pausa y espera que el usuario presione ENTER
-// La uso entre turnos para que se pueda leer lo que paso en la batalla
+// La uso entre turnos para que se pueda leer lo que paso en la batalla así es más cómodo creo 
 void pausa()
 {
     printf("\nPresione ENTER para continuar...");
@@ -110,7 +110,7 @@ void pausa()
 }
 
 // Si el jugador no formo equipos, esta funcion elige personajes al azar
-// Asi el juego no se queda pegado si alguien le da a batalla sin tener equipo
+// Asi el juego no se queda pegado si alguien le da a batalla sin tener equipo 
 void seleccionarEquiposAleatorios()
 {
     int usados1[12], usados2[12];
@@ -198,7 +198,7 @@ void cargarCatalogoBase()
     struct Personaje p11 = {11,"PortadorDelReloj","Luz",50,50,25,25,25,4};
     struct Personaje p12 = {12,"Instructor","Luz",55,55,25,25,20,2};
     
-    // guardo cada personaje en el catalogo
+    // guardo cada personaje en el catalogo usted sabe prof
     catalogo[0] = p1;
     catalogo[1] = p2;
     catalogo[2] = p3;
@@ -231,7 +231,7 @@ void mostrarCatalogo()
 }
 
 // Aqui creo un personaje nuevo con formulas matematicas
-// El usuario solo pone nombre, reino y nivel. Los numeros los calcula el programa
+// El usuario solo pone nombre, reino y nivel. Los numeros los calcula el programa un duro
 void crearPersonaje()
 {
     // verifico que haya espacio en el catalogo (maximo 20)
@@ -278,7 +278,7 @@ void crearPersonaje()
     }
     
     // estas son las formulas que uso para calcular vida, ataque, defensa y energia
-    // use polinomios como pidio el profesor
+    // use un polinomios como pidio el enunciado 
     nuevo.hp = 40 + (nivel * 4);
     nuevo.hp_max = nuevo.hp;
     nuevo.atq = 20 + (nivel * 3) + (nivel * nivel * 0.3);
@@ -429,7 +429,7 @@ void menuCarta(struct Personaje equipo[5], int num)
 }
 
 // Calcula la ventaja elemental entre dos reinos
-// Use conectivos logicos AND (&&) como pidio el profesor
+// Use conectivos logicos AND (&&) para comprar 
 float ventaja(char a[10], char d[10])
 {
     // el ciclo es: Ceniza > Sombra > Vacio > Luz > Ceniza
@@ -447,7 +447,7 @@ float ventaja(char a[10], char d[10])
 }
 
 // Esta es la funcion mas importante: calcula el daño
-// Use el polinomio que pidio el profesor y tambien el logaritmo
+// Use el polinomio que pidio el enunciado y tambien el logaritmo
 float calcularDaño(struct Personaje at, struct Personaje df)
 {
     float base, daño;
@@ -471,7 +471,7 @@ float calcularDaño(struct Personaje at, struct Personaje df)
     return daño;
 }
 
-// Esta funcion simula toda la batalla
+// Esta funcion simula toda la batalla de una
 void batalla()
 {
     int i1 = 0;      // indice del personaje actual del equipo 1
@@ -480,7 +480,7 @@ void batalla()
     float d;         // daño calculado
     int resto;       // daño que pasa a la vida despues de romper el escudo
     
-    // restauro la vida y defensa de todos los personajes
+    // restauro la vida y defensa de todos los personajes (perooo)
     for(int i = 0; i < 5; i++)
     {
         equipo1[i].hp = equipo1[i].hp_max;
