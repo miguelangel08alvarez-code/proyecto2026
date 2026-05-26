@@ -608,3 +608,29 @@ void soporteAcademico()
     printf("Fuerte: x1.5  |  Debil: x0.8\n");
     printf("========================================\n");
 }
+
+
+
+void mostrarCatalogo()
+{
+    if(idioma == 1) printf("\n--- CATALOGO ---\n");
+    else printf("\n--- CATALOG ---\n");
+    
+    printf("-----------------------------------------------------\n");
+    printf("ID  NOMBRE               REINO      V   D   A   E\n");
+    printf("-----------------------------------------------------\n");
+    
+    for(int i = 0; i < totalPersonajes; i++)
+    {
+        printf("%-3d %-20s %-9s %3d %3d %3d %3d\n",
+               catalogo[i].id,
+               catalogo[i].nombre,
+               catalogo[i].reino,
+               catalogo[i].hp,
+               catalogo[i].def,
+               catalogo[i].atq,
+               catalogo[i].ce);
+    }
+    
+    printf("-----------------------------------------------------\n");
+}
