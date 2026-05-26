@@ -258,9 +258,14 @@ void mostrarCatalogo()
 {
     if(idioma == 1) printf("\n--- CATALOGO ---\n");
     else printf("\n--- CATALOG ---\n");
+    
+    printf("-----------------------------------------------------\n");
+    printf("ID  NOMBRE               REINO      V   D   A   E\n");
+    printf("-----------------------------------------------------\n");
+    
     for(int i = 0; i < totalPersonajes; i++)
     {
-        printf("%d.%s[%s] V:%d D:%d A:%d E:%d\n",
+        printf("%-3d %-20s %-9s %3d %3d %3d %3d\n",
                catalogo[i].id,
                catalogo[i].nombre,
                catalogo[i].reino,
@@ -269,8 +274,9 @@ void mostrarCatalogo()
                catalogo[i].atq,
                catalogo[i].ce);
     }
+    
+    printf("-----------------------------------------------------\n");
 }
-
 // Aqui creo un personaje nuevo con formulas matematicas
 void crearPersonaje()
 {
