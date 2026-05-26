@@ -7,7 +7,7 @@
 int idioma = 1;
 
 // Aquí defini la estructura de cada personaje por ejemplo 
-// Cada personaje tiene su numero, nombre, reino, vida, defensa, ataque y energia 
+// Cada personaje tiene su numero, nombre, reino, vida, defensa, ataque y energia
 struct Personaje {
     int id;              // numero del personaje
     char nombre[20];     // nombre que le pongo
@@ -34,10 +34,10 @@ void seleccionarIdioma();
 void cargarCatalogoBase();
 void mostrarCatalogo();
 void crearPersonaje();
-void formarEquipo(struct Personaje equipo[5], int num);
-void menuCarta(struct Personaje equipo[5], int num);
-float calcularDaño(struct Personaje at, struct Personaje df);
-float ventaja(char a[10], char d[10]);
+void formarEquipo(struct Personaje equipo[5], int numeroJugador);
+void menuCarta(struct Personaje equipo[5], int numeroJugador);
+float calcularDaño(struct Personaje atacante, struct Personaje defensor);
+float ventaja(char reinoAtacante[10], char reinoDefensor[10]);
 void batalla();
 void estadisticas();
 void soporteAcademico();
@@ -48,16 +48,16 @@ void pausa();
 // Esta funcion es para que el jugador elija el idioma al empezar
 void seleccionarIdioma()
 {
-    int op;
+    int opcion;
     printf("\n1. Español\n");
     printf("2. English\n");
     printf("Opcion: ");
-    scanf("%d", &op);
-    if(op == 2) idioma = 2;
+    scanf("%d", &opcion);
+    if(opcion == 2) idioma = 2;
     else idioma = 1;
 }
 
-// Esta es la funcion principal, aqui empieza todo está belleza xd
+// Esta es la funcion principal, aqui empieza todo está belleza 
 int main()
 {
     int opcion;
@@ -67,7 +67,7 @@ int main()
     
     do
     {
-        opcion = menu();        // muestro el menu y pregunto que quiere hacer el jugador 
+        opcion = menu();        // muestro el menu y pregunto que quiere hacer
         
         switch(opcion)
         {
@@ -134,53 +134,53 @@ void pausa()
 // Si el jugador no formo equipos, esta funcion elige personajes al azar
 void seleccionarEquiposAleatorios()
 {
-    int usados1[12], usados2[12];
-    int cont1 = 0, cont2 = 0;
-    int num, repetido;
+    int usadosEquipo1[12], usadosEquipo2[12];
+    int contadorEquipo1 = 0, contadorEquipo2 = 0;
+    int numeroAleatorio, repetido;
     
     for(int i = 0; i < 12; i++)
     {
-        usados1[i] = 0;
-        usados2[i] = 0;
+        usadosEquipo1[i] = 0;
+        usadosEquipo2[i] = 0;
     }
     
     if(idioma == 1) printf("\n--- EQUIPO 1 (Aleatorio) ---\n");
     else printf("\n--- TEAM 1 (Random) ---\n");
-    while(cont1 < 5)
+    while(contadorEquipo1 < 5)
     {
-        num = rand() % totalPersonajes;
+        numeroAleatorio = rand() % totalPersonajes;
         repetido = 0;
-        for(int j = 0; j < cont1; j++)
+        for(int j = 0; j < contadorEquipo1; j++)
         {
-            if(usados1[j] == num) repetido = 1;
+            if(usadosEquipo1[j] == numeroAleatorio) repetido = 1;
         }
         if(repetido == 0)
         {
-            equipo1[cont1] = catalogo[num];
-            usados1[cont1] = num;
-            cont1++;
-            if(idioma == 1) printf("Agregado: %s\n", catalogo[num].nombre);
-            else printf("Added: %s\n", catalogo[num].nombre);
+            equipo1[contadorEquipo1] = catalogo[numeroAleatorio];
+            usadosEquipo1[contadorEquipo1] = numeroAleatorio;
+            contadorEquipo1++;
+            if(idioma == 1) printf("Agregado: %s\n", catalogo[numeroAleatorio].nombre);
+            else printf("Added: %s\n", catalogo[numeroAleatorio].nombre);
         }
     }
     
     if(idioma == 1) printf("\n--- EQUIPO 2 (Aleatorio) ---\n");
     else printf("\n--- TEAM 2 (Random) ---\n");
-    while(cont2 < 5)
+    while(contadorEquipo2 < 5)
     {
-        num = rand() % totalPersonajes;
+        numeroAleatorio = rand() % totalPersonajes;
         repetido = 0;
-        for(int j = 0; j < cont2; j++)
+        for(int j = 0; j < contadorEquipo2; j++)
         {
-            if(usados2[j] == num) repetido = 1;
+            if(usadosEquipo2[j] == numeroAleatorio) repetido = 1;
         }
         if(repetido == 0)
         {
-            equipo2[cont2] = catalogo[num];
-            usados2[cont2] = num;
-            cont2++;
-            if(idioma == 1) printf("Agregado: %s\n", catalogo[num].nombre);
-            else printf("Added: %s\n", catalogo[num].nombre);
+            equipo2[contadorEquipo2] = catalogo[numeroAleatorio];
+            usadosEquipo2[contadorEquipo2] = numeroAleatorio;
+            contadorEquipo2++;
+            if(idioma == 1) printf("Agregado: %s\n", catalogo[numeroAleatorio].nombre);
+            else printf("Added: %s\n", catalogo[numeroAleatorio].nombre);
         }
     }
     
@@ -191,7 +191,7 @@ void seleccionarEquiposAleatorios()
 // Muestra las opciones del menu
 int menu()
 {
-    int op;
+    int opcion;
     if(idioma == 1) printf("\n=== MENU ===\n");
     else printf("\n=== MENU ===\n");
     
@@ -219,38 +219,38 @@ int menu()
     }
     
     printf("Opcion: ");
-    scanf("%d", &op);
-    return op;
+    scanf("%d", &opcion);
+    return opcion;
 }
 
 // Aqui cargo los 12 personajes que ya vienen en el juego
 void cargarCatalogoBase()
 {
-    struct Personaje p1 = {1,"Hisoka","Ceniza",40,40,25,25,35,5};
-    struct Personaje p2 = {2,"Mikhail","Ceniza",50,50,25,25,25,4};
-    struct Personaje p3 = {3,"Castiel","Ceniza",35,35,20,20,45,5};
-    struct Personaje p4 = {4,"Lysander","Sombra",45,45,25,25,30,4};
-    struct Personaje p5 = {5,"Espectador","Sombra",50,50,30,30,20,2};
-    struct Personaje p6 = {6,"SombraFugitiva","Sombra",35,35,25,25,40,3};
-    struct Personaje p7 = {7,"Ciel","Vacio",40,40,25,25,35,4};
-    struct Personaje p8 = {8,"ActorEnFuga","Vacio",50,50,25,25,25,3};
-    struct Personaje p9 = {9,"CuerpoSinSombra","Vacio",35,35,25,25,40,4};
-    struct Personaje p10 = {10,"AgenteDelVacio","Luz",45,45,25,25,30,3};
-    struct Personaje p11 = {11,"PortadorDelReloj","Luz",50,50,25,25,25,4};
-    struct Personaje p12 = {12,"Instructor","Luz",55,55,25,25,20,2};
+    struct Personaje personaje1 = {1,"Hisoka","Ceniza",40,40,25,25,35,5};
+    struct Personaje personaje2 = {2,"Mikhail","Ceniza",50,50,25,25,25,4};
+    struct Personaje personaje3 = {3,"Castiel","Ceniza",35,35,20,20,45,5};
+    struct Personaje personaje4 = {4,"Lysander","Sombra",45,45,25,25,30,4};
+    struct Personaje personaje5 = {5,"Espectador","Sombra",50,50,30,30,20,2};
+    struct Personaje personaje6 = {6,"SombraFugitiva","Sombra",35,35,25,25,40,3};
+    struct Personaje personaje7 = {7,"Ciel","Vacio",40,40,25,25,35,4};
+    struct Personaje personaje8 = {8,"ActorEnFuga","Vacio",50,50,25,25,25,3};
+    struct Personaje personaje9 = {9,"CuerpoSinSombra","Vacio",35,35,25,25,40,4};
+    struct Personaje personaje10 = {10,"AgenteDelVacio","Luz",45,45,25,25,30,3};
+    struct Personaje personaje11 = {11,"PortadorDelReloj","Luz",50,50,25,25,25,4};
+    struct Personaje personaje12 = {12,"Instructor","Luz",55,55,25,25,20,2};
     
-    catalogo[0] = p1;
-    catalogo[1] = p2;
-    catalogo[2] = p3;
-    catalogo[3] = p4;
-    catalogo[4] = p5;
-    catalogo[5] = p6;
-    catalogo[6] = p7;
-    catalogo[7] = p8;
-    catalogo[8] = p9;
-    catalogo[9] = p10;
-    catalogo[10] = p11;
-    catalogo[11] = p12;
+    catalogo[0] = personaje1;
+    catalogo[1] = personaje2;
+    catalogo[2] = personaje3;
+    catalogo[3] = personaje4;
+    catalogo[4] = personaje5;
+    catalogo[5] = personaje6;
+    catalogo[6] = personaje7;
+    catalogo[7] = personaje8;
+    catalogo[8] = personaje9;
+    catalogo[9] = personaje10;
+    catalogo[10] = personaje11;
+    catalogo[11] = personaje12;
 }
 
 // Muestra todos los personajes que hay en el catalogo
@@ -281,20 +281,20 @@ void crearPersonaje()
         return;
     }
     
-    struct Personaje nuevo;
-    int opReino, nivel;
+    struct Personaje nuevoPersonaje;
+    int opcionReino, nivel;
     
     if(idioma == 1) printf("Nombre: ");
     else printf("Name: ");
-    scanf("%s", nuevo.nombre);
+    scanf("%s", nuevoPersonaje.nombre);
     
     if(idioma == 1) printf("Reino (1.Ceniza 2.Sombra 3.Vacio 4.Luz): ");
     else printf("Kingdom (1.Ceniza 2.Sombra 3.Vacio 4.Luz): ");
-    scanf("%d", &opReino);
-    if(opReino == 1) strcpy(nuevo.reino, "Ceniza");
-    else if(opReino == 2) strcpy(nuevo.reino, "Sombra");
-    else if(opReino == 3) strcpy(nuevo.reino, "Vacio");
-    else strcpy(nuevo.reino, "Luz");
+    scanf("%d", &opcionReino);
+    if(opcionReino == 1) strcpy(nuevoPersonaje.reino, "Ceniza");
+    else if(opcionReino == 2) strcpy(nuevoPersonaje.reino, "Sombra");
+    else if(opcionReino == 3) strcpy(nuevoPersonaje.reino, "Vacio");
+    else strcpy(nuevoPersonaje.reino, "Luz");
     
     if(idioma == 1) printf("Nivel (1 a 5): ");
     else printf("Level (1 to 5): ");
@@ -309,53 +309,55 @@ void crearPersonaje()
         scanf("%d", &nivel);
     }
     
-    nuevo.hp = 40 + (nivel * 4);
-    nuevo.hp_max = nuevo.hp;
-    nuevo.atq = 20 + (nivel * 3) + (nivel * nivel * 0.3);
-    nuevo.def = 15 + (nivel * 2) + (nivel * 0.5);
-    nuevo.def_max = nuevo.def;
-    nuevo.ce = 3 + (nivel / 2);
-    nuevo.id = totalPersonajes + 1;
+    nuevoPersonaje.hp = 40 + (nivel * 4);
+    nuevoPersonaje.hp_max = nuevoPersonaje.hp;
+    nuevoPersonaje.atq = 20 + (nivel * 3) + (nivel * nivel * 0.3);
+    nuevoPersonaje.def = 15 + (nivel * 2) + (nivel * 0.5);
+    nuevoPersonaje.def_max = nuevoPersonaje.def;
+    nuevoPersonaje.ce = 3 + (nivel / 2);
+    nuevoPersonaje.id = totalPersonajes + 1;
     
-    if(idioma == 1) printf("Personaje creado! HP:%d ATQ:%d DEF:%d\n", nuevo.hp, nuevo.atq, nuevo.def);
-    else printf("Character created! HP:%d ATQ:%d DEF:%d\n", nuevo.hp, nuevo.atq, nuevo.def);
+    if(idioma == 1) printf("Personaje creado! HP:%d ATQ:%d DEF:%d\n", 
+           nuevoPersonaje.hp, nuevoPersonaje.atq, nuevoPersonaje.def);
+    else printf("Character created! HP:%d ATQ:%d DEF:%d\n", 
+           nuevoPersonaje.hp, nuevoPersonaje.atq, nuevoPersonaje.def);
     
-    catalogo[totalPersonajes] = nuevo;
+    catalogo[totalPersonajes] = nuevoPersonaje;
     totalPersonajes++;
 }
 
 // Esta funcion permite que el jugador elija sus 5 personajes
-void formarEquipo(struct Personaje equipo[5], int num)
+void formarEquipo(struct Personaje equipo[5], int numeroJugador)
 {
-    int ids[5];
-    int id;
-    int cont = 0;
+    int idsElegidos[5];
+    int idElegido;
+    int contador = 0;
     
     mostrarCatalogo();
     
-    while(cont < 5)
+    while(contador < 5)
     {
-        if(idioma == 1) printf("ID %d: ", cont + 1);
-        else printf("ID %d: ", cont + 1);
-        scanf("%d", &id);
+        if(idioma == 1) printf("ID %d: ", contador + 1);
+        else printf("ID %d: ", contador + 1);
+        scanf("%d", &idElegido);
         
         int encontrado = 0;
         int repetido = 0;
         
         for(int i = 0; i < totalPersonajes; i++)
         {
-            if(catalogo[i].id == id)
+            if(catalogo[i].id == idElegido)
             {
-                for(int j = 0; j < cont; j++)
+                for(int j = 0; j < contador; j++)
                 {
-                    if(ids[j] == id) repetido = 1;
+                    if(idsElegidos[j] == idElegido) repetido = 1;
                 }
                 
                 if(repetido == 0)
                 {
-                    equipo[cont] = catalogo[i];
-                    ids[cont] = id;
-                    cont++;
+                    equipo[contador] = catalogo[i];
+                    idsElegidos[contador] = idElegido;
+                    contador++;
                     encontrado = 1;
                 }
                 else
@@ -373,54 +375,101 @@ void formarEquipo(struct Personaje equipo[5], int num)
             else printf("Invalid ID\n");
         }
     }
-    if(idioma == 1) printf("Equipo %d listo\n", num);
-    else printf("Team %d ready\n", num);
+    if(idioma == 1) printf("Equipo %d listo\n", numeroJugador);
+    else printf("Team %d ready\n", numeroJugador);
 }
 
 // Cartas de potenciacion (Buff y Nerf)
-void menuCarta(struct Personaje equipo[5], int num)
+void menuCarta(struct Personaje equipo[5], int numeroJugador)
 {
-    int op;
-    char reinoC[10];
-    float multAtq = 1;
-    float multHp = 1;
-    float multDef = 1;
+    int opcionCarta;
+    char reinoCarta[10];
+    float multiplicadorAtaque = 1;
+    float multiplicadorVida = 1;
+    float multiplicadorDefensa = 1;
     int alguienPotenciado = 0;
     
     if(idioma == 1) printf("Cartas:\n");
     else printf("Cards:\n");
-    printf("1.LlamaEterna(Ceniza) +25 ATQ -15 DEF\n");
-    printf("2.MantoOscuro(Sombra) +20 HP -10 ATQ\n");
-    printf("3.AbismoInterior(Vacio) +30 DEF\n");
-    printf("4.LuzDeVerdad(Luz) +25 ATQ -15 HP\n");
-    if(idioma == 1) printf("0.Ninguna\n");
-    else printf("0.None\n");
-    printf("Opcion: ");
-    scanf("%d", &op);
     
-    if(op == 1) { strcpy(reinoC, "Ceniza"); multAtq = 1.25; multDef = 0.85; }
-    else if(op == 2) { strcpy(reinoC, "Sombra"); multHp = 1.20; multAtq = 0.90; }
-    else if(op == 3) { strcpy(reinoC, "Vacio"); multDef = 1.30; }
-    else if(op == 4) { strcpy(reinoC, "Luz"); multAtq = 1.25; multHp = 0.85; }
-    else { if(idioma == 1) printf("Sin carta\n"); else printf("No card\n"); return; }
+    if(idioma == 1)
+    {
+        printf("1.LlamaEterna(Ceniza) +25 ATQ -15 DEF\n");
+        printf("2.MantoOscuro(Sombra) +20 HP -10 ATQ\n");
+        printf("3.AbismoInterior(Vacio) +30 DEF\n");
+        printf("4.LuzDeVerdad(Luz) +25 ATQ -15 HP\n");
+        printf("0.Ninguna\n");
+    }
+    else
+    {
+        printf("1.EternalFlame(Ceniza) +25 ATK -15 DEF\n");
+        printf("2.DarkCloak(Sombra) +20 HP -10 ATK\n");
+        printf("3.InnerAbyss(Vacio) +30 DEF\n");
+        printf("4.TruthLight(Luz) +25 ATK -15 HP\n");
+        printf("0.None\n");
+    }
+    
+    printf("Opcion: ");
+    scanf("%d", &opcionCarta);
+    
+    if(opcionCarta == 1) 
+    { 
+        strcpy(reinoCarta, "Ceniza"); 
+        multiplicadorAtaque = 1.25; 
+        multiplicadorDefensa = 0.85;
+        if(idioma == 1) printf("\n--- Aplicando LlamaEterna a personajes de Ceniza ---\n");
+        else printf("\n--- Applying EternalFlame to Ceniza characters ---\n");
+    }
+    else if(opcionCarta == 2) 
+    { 
+        strcpy(reinoCarta, "Sombra"); 
+        multiplicadorVida = 1.20; 
+        multiplicadorAtaque = 0.90;
+        if(idioma == 1) printf("\n--- Aplicando MantoOscuro a personajes de Sombra ---\n");
+        else printf("\n--- Applying DarkCloak to Sombra characters ---\n");
+    }
+    else if(opcionCarta == 3) 
+    { 
+        strcpy(reinoCarta, "Vacio"); 
+        multiplicadorDefensa = 1.30;
+        if(idioma == 1) printf("\n--- Aplicando AbismoInterior a personajes de Vacio ---\n");
+        else printf("\n--- Applying InnerAbyss to Vacio characters ---\n");
+    }
+    else if(opcionCarta == 4) 
+    { 
+        strcpy(reinoCarta, "Luz"); 
+        multiplicadorAtaque = 1.25; 
+        multiplicadorVida = 0.85;
+        if(idioma == 1) printf("\n--- Aplicando LuzDeVerdad a personajes de Luz ---\n");
+        else printf("\n--- Applying TruthLight to Luz characters ---\n");
+    }
+    else 
+    { 
+        if(idioma == 1) printf("Sin carta\n"); 
+        else printf("No card\n"); 
+        return; 
+    }
     
     for(int i = 0; i < 5; i++)
     {
-        if(strcmp(equipo[i].reino, reinoC) == 0)
+        if(strcmp(equipo[i].reino, reinoCarta) == 0)
         {
             if(idioma == 1) printf("\n%s fue potenciado:\n", equipo[i].nombre);
             else printf("\n%s was powered up:\n", equipo[i].nombre);
-            if(idioma == 1) printf("  Ataque: %d -> %d", equipo[i].atq, (int)(equipo[i].atq * multAtq));
-            else printf("  Attack: %d -> %d", equipo[i].atq, (int)(equipo[i].atq * multAtq));
-            equipo[i].atq = equipo[i].atq * multAtq;
-            if(idioma == 1) printf("  Vida: %d -> %d", equipo[i].hp, (int)(equipo[i].hp * multHp));
-            else printf("  Health: %d -> %d", equipo[i].hp, (int)(equipo[i].hp * multHp));
-            equipo[i].hp = equipo[i].hp * multHp;
-            equipo[i].hp_max = equipo[i].hp_max * multHp;
-            if(idioma == 1) printf("  Defensa: %d -> %d", equipo[i].def, (int)(equipo[i].def * multDef));
-            else printf("  Defense: %d -> %d", equipo[i].def, (int)(equipo[i].def * multDef));
-            equipo[i].def = equipo[i].def * multDef;
-            equipo[i].def_max = equipo[i].def_max * multDef;
+            
+            if(idioma == 1) printf("  Ataque: %d -> %d", equipo[i].atq, (int)(equipo[i].atq * multiplicadorAtaque));
+            else printf("  Attack: %d -> %d", equipo[i].atq, (int)(equipo[i].atq * multiplicadorAtaque));
+            equipo[i].atq = equipo[i].atq * multiplicadorAtaque;
+            
+            if(idioma == 1) printf("  Vida: %d -> %d", equipo[i].hp, (int)(equipo[i].hp * multiplicadorVida));
+            else printf("  Health: %d -> %d", equipo[i].hp, (int)(equipo[i].hp * multiplicadorVida));
+            equipo[i].hp = equipo[i].hp * multiplicadorVida;
+            equipo[i].hp_max = equipo[i].hp_max * multiplicadorVida;
+            
+            if(idioma == 1) printf("  Defensa: %d -> %d", equipo[i].def, (int)(equipo[i].def * multiplicadorDefensa));
+            else printf("  Defense: %d -> %d", equipo[i].def, (int)(equipo[i].def * multiplicadorDefensa));
+            equipo[i].def = equipo[i].def * multiplicadorDefensa;
+            equipo[i].def_max = equipo[i].def_max * multiplicadorDefensa;
             printf("\n");
             alguienPotenciado = 1;
         }
@@ -428,35 +477,50 @@ void menuCarta(struct Personaje equipo[5], int num)
     
     if(alguienPotenciado == 0)
     {
-        if(idioma == 1) printf("\nNingun personaje de tu equipo es del reino %s. Carta sin efecto.\n", reinoC);
-        else printf("\nNo character in your team belongs to the %s kingdom. Card has no effect.\n", reinoC);
+        if(idioma == 1) printf("\nNingun personaje de tu equipo es del reino %s. Carta sin efecto.\n", reinoCarta);
+        else printf("\nNo character in your team belongs to the %s kingdom. Card has no effect.\n", reinoCarta);
     }
 }
 
 // Calcula la ventaja elemental entre dos reinos
-float ventaja(char a[10], char d[10])
+float ventaja(char reinoAtacante[10], char reinoDefensor[10])
 {
-    if(strcmp(a, "Ceniza") == 0 && strcmp(d, "Sombra") == 0) return 1.5;
-    if(strcmp(a, "Sombra") == 0 && strcmp(d, "Vacio") == 0) return 1.5;
-    if(strcmp(a, "Vacio") == 0 && strcmp(d, "Luz") == 0) return 1.5;
-    if(strcmp(a, "Luz") == 0 && strcmp(d, "Ceniza") == 0) return 1.5;
-    if(strcmp(a, "Ceniza") == 0 && strcmp(d, "Luz") == 0) return 0.8;
-    if(strcmp(a, "Sombra") == 0 && strcmp(d, "Ceniza") == 0) return 0.8;
-    if(strcmp(a, "Vacio") == 0 && strcmp(d, "Sombra") == 0) return 0.8;
-    if(strcmp(a, "Luz") == 0 && strcmp(d, "Vacio") == 0) return 0.8;
+    // el ciclo es: Ceniza > Sombra > Vacio > Luz > Ceniza
+    
+    // CASOS FUERTES (x1.5)
+    if(strcmp(reinoAtacante, "Ceniza") == 0 && strcmp(reinoDefensor, "Sombra") == 0) return 1.5;
+    if(strcmp(reinoAtacante, "Sombra") == 0 && strcmp(reinoDefensor, "Vacio") == 0) return 1.5;
+    if(strcmp(reinoAtacante, "Vacio") == 0 && strcmp(reinoDefensor, "Luz") == 0) return 1.5;
+    if(strcmp(reinoAtacante, "Luz") == 0 && strcmp(reinoDefensor, "Ceniza") == 0) return 1.5;
+    
+    // CASOS DEBILES (x0.8)
+    if(strcmp(reinoAtacante, "Ceniza") == 0 && strcmp(reinoDefensor, "Luz") == 0) return 0.8;
+    if(strcmp(reinoAtacante, "Sombra") == 0 && strcmp(reinoDefensor, "Ceniza") == 0) return 0.8;
+    if(strcmp(reinoAtacante, "Vacio") == 0 && strcmp(reinoDefensor, "Sombra") == 0) return 0.8;
+    if(strcmp(reinoAtacante, "Luz") == 0 && strcmp(reinoDefensor, "Vacio") == 0) return 0.8;
+    
+    // SIN VENTAJA
     return 1.0;
 }
 
 // Calcula el daño usando polinomio y ventaja
-float calcularDaño(struct Personaje at, struct Personaje df)
+float calcularDaño(struct Personaje atacante, struct Personaje defensor)
 {
     float base, daño;
     
-    base = (2 * (at.atq / 10.0) * (at.atq / 10.0)) + (3 * (at.atq / 10.0)) + 5;
-    base = base / (at.ce + 1);
-    base = base * 3;
-    daño = base * ventaja(at.reino, df.reino);
+    // polinomio: 2*(ATQ/10)^2 + 3*(ATQ/10) + 5
+    base = (2 * (atacante.atq / 10.0) * (atacante.atq / 10.0)) + (3 * (atacante.atq / 10.0)) + 5;
     
+    // escalado por energia (esto simula el logaritmo)
+    base = base / (atacante.ce + 1);
+    
+    // multiplico por 3 para que la batalla no sea eterna
+    base = base * 3;
+    
+    // aplico la ventaja elemental
+    daño = base * ventaja(atacante.reino, defensor.reino);
+    
+    // pongo limites para que el daño no sea ni muy bajo ni muy alto
     if(daño < 15) daño = 15;
     if(daño > 60) daño = 60;
     
@@ -466,9 +530,11 @@ float calcularDaño(struct Personaje at, struct Personaje df)
 // Simula toda la batalla
 void batalla()
 {
-    int i1 = 0, i2 = 0, turno = 1;
-    float d;
-    int resto;
+    int indiceEquipo1 = 0;
+    int indiceEquipo2 = 0;
+    int turno = 1;
+    float dañoActual;
+    int dañoRestante;
     
     for(int i = 0; i < 5; i++)
     {
@@ -481,36 +547,36 @@ void batalla()
     if(idioma == 1) printf("\n========== BATALLA ==========\n");
     else printf("\n========== BATTLE ==========\n");
     
-    while(i1 < 5 && i2 < 5)
+    while(indiceEquipo1 < 5 && indiceEquipo2 < 5)
     {
         printf("\n----------------------------------------\n");
-        printf("%s vs %s\n", equipo1[i1].nombre, equipo2[i2].nombre);
+        printf("%s vs %s\n", equipo1[indiceEquipo1].nombre, equipo2[indiceEquipo2].nombre);
         printf("[J1] %s V:%d D:%d | [J2] %s V:%d D:%d\n",
-               equipo1[i1].nombre, equipo1[i1].hp, equipo1[i1].def,
-               equipo2[i2].nombre, equipo2[i2].hp, equipo2[i2].def);
+               equipo1[indiceEquipo1].nombre, equipo1[indiceEquipo1].hp, equipo1[indiceEquipo1].def,
+               equipo2[indiceEquipo2].nombre, equipo2[indiceEquipo2].hp, equipo2[indiceEquipo2].def);
         
         if(turno == 1)
         {
             if(idioma == 1) printf("\n>>> JUGADOR 1 ATACA <<<\n");
             else printf("\n>>> PLAYER 1 ATTACKS <<<\n");
-            d = calcularDaño(equipo1[i1], equipo2[i2]);
-            danioTotal1 = danioTotal1 + d;
-            if(idioma == 1) printf("Daño causado: %.0f\n", d);
-            else printf("Damage caused: %.0f\n", d);
+            dañoActual = calcularDaño(equipo1[indiceEquipo1], equipo2[indiceEquipo2]);
+            danioTotal1 = danioTotal1 + dañoActual;
+            if(idioma == 1) printf("Daño causado: %.0f\n", dañoActual);
+            else printf("Damage caused: %.0f\n", dañoActual);
             
-            if(d <= equipo2[i2].def)
+            if(dañoActual <= equipo2[indiceEquipo2].def)
             {
-                equipo2[i2].def = equipo2[i2].def - d;
-                if(idioma == 1) printf("El escudo absorbe. DEF restante: %d\n", equipo2[i2].def);
-                else printf("Shield absorbs. DEF remaining: %d\n", equipo2[i2].def);
+                equipo2[indiceEquipo2].def = equipo2[indiceEquipo2].def - dañoActual;
+                if(idioma == 1) printf("El escudo absorbe. DEF restante: %d\n", equipo2[indiceEquipo2].def);
+                else printf("Shield absorbs. DEF remaining: %d\n", equipo2[indiceEquipo2].def);
             }
             else
             {
-                resto = d - equipo2[i2].def;
-                equipo2[i2].def = 0;
-                equipo2[i2].hp = equipo2[i2].hp - resto;
-                if(idioma == 1) printf("Escudo roto! Daño a vida: %d. VIDA restante: %d\n", resto, equipo2[i2].hp);
-                else printf("Shield broken! Damage to health: %d. HEALTH remaining: %d\n", resto, equipo2[i2].hp);
+                dañoRestante = dañoActual - equipo2[indiceEquipo2].def;
+                equipo2[indiceEquipo2].def = 0;
+                equipo2[indiceEquipo2].hp = equipo2[indiceEquipo2].hp - dañoRestante;
+                if(idioma == 1) printf("Escudo roto! Daño a vida: %d. VIDA restante: %d\n", dañoRestante, equipo2[indiceEquipo2].hp);
+                else printf("Shield broken! Damage to health: %d. HEALTH remaining: %d\n", dañoRestante, equipo2[indiceEquipo2].hp);
             }
             turno = 2;
         }
@@ -518,62 +584,62 @@ void batalla()
         {
             if(idioma == 1) printf("\n>>> JUGADOR 2 ATACA <<<\n");
             else printf("\n>>> PLAYER 2 ATTACKS <<<\n");
-            d = calcularDaño(equipo2[i2], equipo1[i1]);
-            danioTotal2 = danioTotal2 + d;
-            if(idioma == 1) printf("Daño causado: %.0f\n", d);
-            else printf("Damage caused: %.0f\n", d);
+            dañoActual = calcularDaño(equipo2[indiceEquipo2], equipo1[indiceEquipo1]);
+            danioTotal2 = danioTotal2 + dañoActual;
+            if(idioma == 1) printf("Daño causado: %.0f\n", dañoActual);
+            else printf("Damage caused: %.0f\n", dañoActual);
             
-            if(d <= equipo1[i1].def)
+            if(dañoActual <= equipo1[indiceEquipo1].def)
             {
-                equipo1[i1].def = equipo1[i1].def - d;
-                if(idioma == 1) printf("El escudo absorbe. DEF restante: %d\n", equipo1[i1].def);
-                else printf("Shield absorbs. DEF remaining: %d\n", equipo1[i1].def);
+                equipo1[indiceEquipo1].def = equipo1[indiceEquipo1].def - dañoActual;
+                if(idioma == 1) printf("El escudo absorbe. DEF restante: %d\n", equipo1[indiceEquipo1].def);
+                else printf("Shield absorbs. DEF remaining: %d\n", equipo1[indiceEquipo1].def);
             }
             else
             {
-                resto = d - equipo1[i1].def;
-                equipo1[i1].def = 0;
-                equipo1[i1].hp = equipo1[i1].hp - resto;
-                if(idioma == 1) printf("Escudo roto! Daño a vida: %d. VIDA restante: %d\n", resto, equipo1[i1].hp);
-                else printf("Shield broken! Damage to health: %d. HEALTH remaining: %d\n", resto, equipo1[i1].hp);
+                dañoRestante = dañoActual - equipo1[indiceEquipo1].def;
+                equipo1[indiceEquipo1].def = 0;
+                equipo1[indiceEquipo1].hp = equipo1[indiceEquipo1].hp - dañoRestante;
+                if(idioma == 1) printf("Escudo roto! Daño a vida: %d. VIDA restante: %d\n", dañoRestante, equipo1[indiceEquipo1].hp);
+                else printf("Shield broken! Damage to health: %d. HEALTH remaining: %d\n", dañoRestante, equipo1[indiceEquipo1].hp);
             }
             turno = 1;
         }
         
-        if(equipo2[i2].hp <= 0)
+        if(equipo2[indiceEquipo2].hp <= 0)
         {
-            if(idioma == 1) printf("\n*** %s ha muerto! ***\n", equipo2[i2].nombre);
-            else printf("\n*** %s has died! ***\n", equipo2[i2].nombre);
-            i2 = i2 + 1;
-            if(i2 < 5)
+            if(idioma == 1) printf("\n*** %s ha muerto! ***\n", equipo2[indiceEquipo2].nombre);
+            else printf("\n*** %s has died! ***\n", equipo2[indiceEquipo2].nombre);
+            indiceEquipo2 = indiceEquipo2 + 1;
+            if(indiceEquipo2 < 5)
             {
-                if(idioma == 1) printf("Entra al campo: %s\n", equipo2[i2].nombre);
-                else printf("Enters the field: %s\n", equipo2[i2].nombre);
+                if(idioma == 1) printf("Entra al campo: %s\n", equipo2[indiceEquipo2].nombre);
+                else printf("Enters the field: %s\n", equipo2[indiceEquipo2].nombre);
             }
         }
-        if(equipo1[i1].hp <= 0)
+        if(equipo1[indiceEquipo1].hp <= 0)
         {
-            if(idioma == 1) printf("\n*** %s ha muerto! ***\n", equipo1[i1].nombre);
-            else printf("\n*** %s has died! ***\n", equipo1[i1].nombre);
-            i1 = i1 + 1;
-            if(i1 < 5)
+            if(idioma == 1) printf("\n*** %s ha muerto! ***\n", equipo1[indiceEquipo1].nombre);
+            else printf("\n*** %s has died! ***\n", equipo1[indiceEquipo1].nombre);
+            indiceEquipo1 = indiceEquipo1 + 1;
+            if(indiceEquipo1 < 5)
             {
-                if(idioma == 1) printf("Entra al campo: %s\n", equipo1[i1].nombre);
-                else printf("Enters the field: %s\n", equipo1[i1].nombre);
+                if(idioma == 1) printf("Entra al campo: %s\n", equipo1[indiceEquipo1].nombre);
+                else printf("Enters the field: %s\n", equipo1[indiceEquipo1].nombre);
             }
         }
         
         pausa();
     }
     
-     if(idioma == 1) printf("\n========== RESULTADO FINAL ==========\n");
+    if(idioma == 1) printf("\n========== RESULTADO FINAL ==========\n");
     else printf("\n========== FINAL RESULT ==========\n");
-    if(i1 >= 5 && i2 >= 5)
+    if(indiceEquipo1 >= 5 && indiceEquipo2 >= 5)
     {
         if(idioma == 1) printf("EMPATE\n");
         else printf("DRAW\n");
     }
-    else if(i1 >= 5)
+    else if(indiceEquipo1 >= 5)
     {
         if(idioma == 1) printf("JUGADOR 2 GANA LA BATALLA\n");
         else printf("PLAYER 2 WINS THE BATTLE\n");
@@ -613,7 +679,6 @@ void estadisticas()
 }
 
 // Esta funcion explica las matematicas y la logica que use
-//Una chuleta xd de lo que se le agrego 
 void soporteAcademico()
 {
     if(idioma == 1) printf("\n========== SOPORTE ACADEMICO ==========\n");
@@ -627,8 +692,8 @@ void soporteAcademico()
         printf("3. Inecuacion: if(daño <= defensa) escudo; else daño a vida\n");
         printf("4. Valor Absoluto: La defensa nunca queda negativa\n");
         printf("\nLOGICA USADA:\n");
-        printf("1. Conectivos AND (&&): if(reinoA==Ceniza && reinoD==Sombra)\n");
-        printf("2. Cuantificadores: while(i1<5 && i2<5)\n");
+        printf("1. Conectivos AND (&&): if(reinoAtacante==Ceniza && reinoDefensor==Sombra)\n");
+        printf("2. Cuantificadores: while(indiceEquipo1<5 && indiceEquipo2<5)\n");
         printf("3. Teoria de Conjuntos: Clasificacion por reinos\n");
         printf("\nVENTAJA ELEMENTAL:\n");
         printf("Ceniza > Sombra > Vacio > Luz > Ceniza\n");
@@ -642,8 +707,8 @@ void soporteAcademico()
         printf("3. Inequality: if(damage <= defense) shield; else damage to health\n");
         printf("4. Absolute Value: Defense never becomes negative\n");
         printf("\nLOGIC USED:\n");
-        printf("1. AND connectives (&&): if(kingdomA==Ceniza && kingdomD==Sombra)\n");
-        printf("2. Quantifiers: while(i1<5 && i2<5)\n");
+        printf("1. AND connectives (&&): if(attackerKingdom==Ceniza && defenderKingdom==Sombra)\n");
+        printf("2. Quantifiers: while(team1Index<5 && team2Index<5)\n");
         printf("3. Set Theory: Classification by kingdoms\n");
         printf("\nELEMENTAL ADVANTAGE:\n");
         printf("Ceniza > Sombra > Vacio > Luz > Ceniza\n");
