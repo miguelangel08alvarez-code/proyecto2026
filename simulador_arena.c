@@ -253,7 +253,13 @@ void cargarCatalogoBase()
     catalogo[11] = personaje12;
 }
 
-// Muestra todos los personajes que hay en el catalogo
+// Esta funcion muestra el catalogo de personajes en forma de tabla ordenada
+// Use printf con formatos especiales para que los datos queden alineados:
+//   %-3d  -> numero entero alineado a la izquierda, ocupa 3 espacios
+//   %-20s -> texto alineado a la izquierda, ocupa 20 espacios
+//   %-9s  -> texto alineado a la izquierda, ocupa 9 espacios
+//   %3d   -> numero entero alineado a la derecha, ocupa 3 espacios
+// Asi se ve todo bonito y ordenado en columnas prof XD
 void mostrarCatalogo()
 {
     if(idioma == 1) printf("\n--- CATALOGO ---\n");
