@@ -529,7 +529,10 @@ float calcularDaño(struct Personaje atacante, struct Personaje defensor)
     //24.5+10.5+5= 40
     base = (2 * (atacante.atq / 10.0) * (atacante.atq / 10.0)) + (3 * (atacante.atq / 10.0)) + 5;
     
-    // escalado por energia (esto simula el logaritmo)
+        // escalado por energia (esto simula el logaritmo)
+    //Ejemplo con Hisoka (CE = 5):
+    //CE + 1 = 5 + 1 = 6
+    //40 ÷ 6 = 6.66
     base = base / (atacante.ce + 1);
     
     // multiplico por 3 para que la batalla no sea eterna
