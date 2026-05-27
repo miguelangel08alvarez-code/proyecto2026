@@ -520,7 +520,13 @@ float calcularDaño(struct Personaje atacante, struct Personaje defensor)
 {
     float base, daño;
     
-    // polinomio: 2*(ATQ/10)^2 + 3*(ATQ/10) + 5
+        // polinomio: 2*(ATQ/10)^2 + 3*(ATQ/10) + 5
+    //ejemplo con Hisoka 
+    //ATQ/10=35 dividido entre 10 = 3.5
+    //(ATQ/10)²=3.5 x 3.5 = 12.25
+    //2 por 12.25= 24.5
+    //3 por 3.5 = 10.5
+    //24.5+10.5+5= 40
     base = (2 * (atacante.atq / 10.0) * (atacante.atq / 10.0)) + (3 * (atacante.atq / 10.0)) + 5;
     
     // escalado por energia (esto simula el logaritmo)
